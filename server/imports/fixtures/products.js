@@ -3,6 +3,7 @@ import _ from "lodash";
 import { Factory } from "meteor/dburles:factory";
 import { Products, Tags } from "/lib/collections";
 import { getShop } from "./shops";
+import { getUser } from "./users";
 
 
 /**
@@ -120,6 +121,7 @@ export default function () {
     //  relatedTagIds: [],
     isTopLevel: true,
     shopId: getShop()._id,
+    userId: getUser()._id,
     createdAt: faker.date.past(),
     updatedAt: new Date()
   });

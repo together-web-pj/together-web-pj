@@ -9,6 +9,8 @@ import { Media } from "/lib/collections";
 
 class ProductSocialContainer extends Component {
   render() {
+  if(this.props.editable)
+  {
     return (
       <EditContainer
         data={this.props.data}
@@ -21,6 +23,9 @@ class ProductSocialContainer extends Component {
         <SocialButtons {...this.props.socialSettings} />
       </EditContainer>
     );
+    }else{
+      return null;
+    }
   }
 }
 

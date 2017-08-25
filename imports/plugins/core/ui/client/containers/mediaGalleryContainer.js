@@ -232,6 +232,7 @@ function composer(props, onData) {
     editable = false;
   } else {
     editable = Reaction.hasPermission(props.permission || ["createProduct"]);
+    editable = editable && (ReactionProduct.selectedProductUserID() === Meteor.userId());
   }
 
   onData(null, {
