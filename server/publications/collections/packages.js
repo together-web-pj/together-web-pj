@@ -30,7 +30,6 @@ function transform(doc, userId) {
 
   // check for admin,owner or package permissions to view settings
   const hasAdmin = Roles.userIsInRole(userId, permissions, doc.shopId);
-
   if (doc.registry) {
     for (let registry of doc.registry) {
       // add some normalized defaults
@@ -66,7 +65,20 @@ function transform(doc, userId) {
     doc.settings = packageSettings;
   }
 
-  return doc;
+  if(hasAdmin)
+  {
+	
+	if(doc.registry){
+	  doc.registry = doc.registry.filter(function(registry){	  
+        const permissions = ["admin", "owner", registry.name || (userId, registry.packageName + "/" + registry.template)];
+	    const hasRegPermission = Roles.userIsInRole(userId, permissions, doc.shopId);
+	    return (!registry.route || hasRegPermission);
+        });
+	}
+    return doc;
+  }
+  else
+    return null;
 }
 
 //
@@ -107,7 +119,7 @@ Meteor.publish("Packages", function (shopCursor) {
       }
       // observe and transform Package registry adds i18n and other meta data
       const observer = Packages.find({
-        shopId: shop._id
+        userId: self.userId
       }, options).observe({
         added: function (doc) {
           self.added("Packages", doc._id, transform(doc, self.userId));

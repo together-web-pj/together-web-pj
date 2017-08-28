@@ -268,7 +268,7 @@ export default {
   },
 
   getPackageSettings(name) {
-    return Packages.findOne({ name, shopId: this.getShopId() });
+    return Packages.findOne({ name, userId: Meteor.userId() });
   },
 
   allowGuestCheckout() {

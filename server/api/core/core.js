@@ -8,7 +8,7 @@ import { Accounts } from "meteor/accounts-base";
 import { Roles } from "meteor/alanning:roles";
 import { EJSON } from "meteor/ejson";
 import { Jobs, Packages, Shops } from "/lib/collections";
-import { Hooks, Logger } from "/server/api";
+import { Hooks, Logger,Reaction } from "/server/api";
 import ProcessJobs from "/server/jobs";
 import { registerTemplate } from "./templates";
 import { sendVerificationEmail } from "./accounts";
@@ -439,14 +439,15 @@ export default {
     }
 
     const layouts = [];
+    const shopUsers = Meteor.users.find();
     // for each shop, we're loading packages in a unique registry
     _.each(this.Packages, (config, pkgName) => {
-      return Shops.find().forEach((shop) => {
-        const shopId = shop._id;
-        if (!shopId) return [];
+        return shopUsers.forEach((user)=>{
+        const userId = user._id;
+        if (!userId) return [];
 
         // existing registry will be upserted with changes, perhaps we should add:
-        this.assignOwnerRoles(shopId, pkgName, config.registry);
+        this.assignOwnerRoles(Reaction.getShopId(), pkgName, config.registry);
 
         // Settings from the package registry.js
         const settingsFromPackage = {
@@ -468,7 +469,7 @@ export default {
 
         // Setting already imported into the packages collection
         const settingsFromDB = _.find(packages, (ps) => {
-          return (config.name === ps.name && shopId === ps.shopId);
+          return (config.name === ps.name && userId === ps.userId);
         });
 
         const combinedSettings = merge({}, settingsFromPackage, settingsFromFixture || {}, settingsFromDB || {});
@@ -483,8 +484,8 @@ export default {
           }
         }
         // Import package data
-        this.Import.package(combinedSettings, shopId);
-        return Logger.debug(`Initializing ${shop.name} ${pkgName}`);
+        this.Import.package(combinedSettings, userId);
+        return Logger.debug(`Initializing ${userId} ${pkgName}`);
       }); // end shops
     });
 

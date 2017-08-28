@@ -59,10 +59,6 @@ export function Apps(optionHash) {
     }
   }
 
-  // you could provide a shopId in optionHash
-  if (!options.shopId) {
-    options.shopId = Reaction.getShopId();
-  }
 
   // remove audience permissions for owner (still needed here for older/legacy calls)
   if (Reaction.hasOwnerAccess() && options.audience) {
@@ -76,16 +72,16 @@ export function Apps(optionHash) {
     if ({}.hasOwnProperty.call(options, key)) {
       const value = options[key];
       if (value) {
-        if (!(key === "enabled" || key === "name" || key === "shopId")) {
+        if (!(key === "enabled" || key === "name"  || key === "userId")) {
           filter["registry." + key] = Array.isArray(options[key]) ? { $in: value } : value;
           registryFilter[key] = value;
         } else {
           // perhaps not the best way to check but lets admin see all packages
           if (!Reaction.hasOwnerAccess()) {
-            if (key !== "shopId") {
+            if (key !== "userId") {
               registryFilter[key] = value;
-            }
           }
+         }
           filter[key] = value;
         }
       }
@@ -129,6 +125,8 @@ export function Apps(optionHash) {
         // safe to clean up now, and isMatch can ignore audience
         delete itemFilter.audience;
       }
+	  else if(itemFilter.audience)
+        delete itemFilter.audience;
 
       return _.isMatch(item, itemFilter);
     });

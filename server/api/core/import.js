@@ -241,12 +241,12 @@ Import.product = function (key, product) {
  * @param {String} shopId The package data to be updated
  * @returns {undefined}
  */
-Import.package = function (pkg, shopId) {
+Import.package = function (pkg, userId) {
   check(pkg, Object);
-  check(shopId, String);
+  check(userId, String);
   const key = {
     name: pkg.name,
-    shopId: shopId
+    userId: userId
   };
   return this.object(Collections.Packages, key, pkg);
 };
@@ -390,6 +390,7 @@ Import.object = function (collection, key, object) {
     find.upsert().update({
       $set: importObject
     });
+
   } else {
     find.upsert().update({
       $set: importObject,

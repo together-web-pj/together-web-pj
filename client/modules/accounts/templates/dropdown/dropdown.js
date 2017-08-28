@@ -76,3 +76,9 @@ Template.accountsDropdownApps.helpers({
     };
   }
 });
+Template.userAccountsDropdown.helpers({
+  userid() {
+    return Meteor.userId();
+  }
+});
+

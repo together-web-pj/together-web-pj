@@ -776,6 +776,13 @@ export function createFallbackLoginToken() {
     return loginToken;
   }
 }
+export function updatePackages() {
+      console.log("=== updatePackages ===");
+	  //reload packages for users
+      Reaction.loadPackages();
+      Reaction.Import.flush();
+	  return true;
+}
 
 /**
  * Reaction Account Methods
@@ -792,5 +799,6 @@ Meteor.methods({
   "accounts/addUserPermissions": addUserPermissions,
   "accounts/removeUserPermissions": removeUserPermissions,
   "accounts/setUserPermissions": setUserPermissions,
-  "accounts/createFallbackLoginToken": createFallbackLoginToken
+  "accounts/createFallbackLoginToken": createFallbackLoginToken,
+  "accounts/updatePackages": updatePackages
 });
