@@ -110,3 +110,4 @@ export default function ToolbarContainer(Comp) {
 
   return composeWithTracker(composer, null)(CompositeComponent);
 }
+export {handleAddProduct}
