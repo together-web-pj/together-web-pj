@@ -695,11 +695,13 @@ Meteor.methods({
 
     // if a product object was provided
     if (product) {
+	  product.userId = Meteor.userId();
       return Products.insert(product);
     }
 
     return Products.insert({
-      type: "simple" // needed for multi-schema
+      type: "simple", // needed for multi-schema
+	  userId: Meteor.userId()
     }, {
       validate: false
     }, (error, result) => {
