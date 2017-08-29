@@ -433,7 +433,6 @@ Router.initPackageRoutes = (options) => {
   Router.Reaction = options.reactionContext;
   Router.routes = [];
 
-  const pkgs = Packages.find().fetch();
   const prefix = Router.Reaction.getShopPrefix();
   const routeDefinitions = [];
 
@@ -443,8 +442,9 @@ Router.initPackageRoutes = (options) => {
   const shopSub = Meteor.subscribe("shopsCount");
 
   Tracker.autorun(shopSubWaitFor => {
+    const pkgs = Packages.find().fetch();
     if (shopSub.ready()) {
-      shopSubWaitFor.stop();
+      //shopSubWaitFor.stop();
       // using tmeasday:publish-counts
       const shopCount = Counts.get("shops-count");
 
