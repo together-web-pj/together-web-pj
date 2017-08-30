@@ -777,11 +777,28 @@ export function createFallbackLoginToken() {
   }
 }
 export function updatePackages() {
-      console.log("=== updatePackages ===");
-	  //reload packages for users
-      Reaction.loadPackages();
-      Reaction.Import.flush();
-	  return true;
+    
+    //insert packages for current user
+    const userId = Meteor.userId();
+    if (!userId) return [];
+	_.each(Reaction.Packages, (config, pkgName) => {
+
+        // existing registry will be upserted with changes, perhaps we should add:
+        Reaction.assignOwnerRoles(Reaction.getShopId(), pkgName, config.registry);
+
+        // Settings from the package registry.js
+        const settingsFromPackage = {
+          name: pkgName,
+          icon: config.icon,
+          enabled: !!config.autoEnable,
+          settings: config.settings,
+          registry: config.registry,
+          layout: config.layout,
+		  userId: userId
+        };
+
+		Packages.insert(settingsFromPackage);
+	});
 }
 
 /**
