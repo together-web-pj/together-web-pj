@@ -196,6 +196,7 @@ class ProductGridItemsContainer extends Component {
     event.preventDefault();
     const product = this.props.product;
 
+    ReactionProduct.setProduct(product.handle);
     if (Reaction.hasPermission("createProduct") && Reaction.isPreview() === false) {
       if (this.props.isSearch) {
         let handle = product.handle;

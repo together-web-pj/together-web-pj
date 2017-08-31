@@ -9,8 +9,9 @@ import { Roles } from "meteor/alanning:roles";
 import Logger from "/client/modules/logger";
 import { Countries } from "/client/collections";
 import { localeDep } from  "/client/modules/i18n";
-import { Packages, Shops } from "/lib/collections";
+import { Packages, Shops,Products } from "/lib/collections";
 import { Router } from "/client/modules/router";
+import { ReactionProduct } from "/lib/api";
 
 // Global, private state object for client side
 // This is placed outside the main object to make it a private variable.
@@ -92,6 +93,24 @@ export default {
     let permissions = ["owner"];
     let id = "";
     const userId = checkUserId || this.userId || Meteor.userId();
+
+	function checkProduct(){
+	  const productId = ReactionProduct.selectedProductId();
+	  if(productId){
+	    const products = Products.findOne({_id: productId});
+	    return (products && products.userId == userId);
+	  }
+	}
+
+	if (typeof checkPermissions === "string" && checkPermissions == "createProduct"){
+	  if(!checkProduct())
+		return false;
+	}else if(checkPermissions instanceof Array){
+	  const id = checkPermissions.indexOf("createProduct");
+	  if(id == -1 && !checkProduct())
+		delete checkPermissions[id];
+	}
+
     //
     // local roleCheck function
     // is the bulk of the logic
