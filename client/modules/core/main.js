@@ -102,13 +102,25 @@ export default {
 	  }
 	}
 
-	if (typeof checkPermissions === "string" && checkPermissions == "createProduct"){
+	if (typeof checkPermissions === "string" && 
+		(checkPermissions == "createProduct" ||
+		checkPermissions == "dashboard"
+		)){
 	  if(!checkProduct())
 		return false;
 	}else if(checkPermissions instanceof Array){
-	  const id = checkPermissions.indexOf("createProduct");
-	  if(id == -1 && !checkProduct())
-		delete checkPermissions[id];
+	  const cpPos = checkPermissions.indexOf("createProduct");
+	  const dbPos = checkPermissions.indexOf("dashboard");
+	  if(!checkProduct()){
+	    if(cpPos != -1){
+		 delete checkPermissions[cpPos];
+		 checkPermissions.length--;
+		}
+	    if(dbPos != -1){
+		 delete checkPermissions[dbPos];
+		 checkPermissions.length--;
+		}
+	  }
 	}
 
     //
