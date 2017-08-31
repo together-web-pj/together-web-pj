@@ -94,13 +94,10 @@ export default {
     let id = "";
     const userId = checkUserId || this.userId || Meteor.userId();
 
-	function checkProduct(){
-	  const productId = ReactionProduct.selectedProductId();
-	  if(productId){
-	    const products = Products.findOne({_id: productId});
-	    return (products && products.userId == userId);
-	  }
-	}
+    function checkProduct(){
+      const productUserId = ReactionProduct.selectedProductUserID();
+      return productUserId === userId;
+    }
 
 	if (typeof checkPermissions === "string" && 
 		(checkPermissions == "createProduct" ||

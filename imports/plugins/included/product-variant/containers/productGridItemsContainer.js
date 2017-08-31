@@ -150,6 +150,8 @@ class ProductGridItemsContainer extends Component {
 
   handleCheckboxSelect = (list, product) => {
     let checkbox = list.querySelector(`input[type=checkbox][value="${product._id}"]`);
+    if(!checkbox)
+      return;
     const items = document.querySelectorAll("li.product-grid-item");
     const activeItems = document.querySelectorAll("li.product-grid-item.active");
     const selected = activeItems.length;
@@ -226,9 +228,12 @@ class ProductGridItemsContainer extends Component {
           this.handleCheckboxSelect(list, product);
         } else {
           const checkbox = list.querySelector(`input[type=checkbox][value="${product._id}"]`);
-          Session.set("productGrid/selectedProducts", []);
-          checkbox.checked = true;
-          this.props.itemSelectHandler(checkbox.checked, product._id);
+          if(checkbox)
+          {
+            Session.set("productGrid/selectedProducts", []);
+            checkbox.checked = true;
+            this.props.itemSelectHandler(checkbox.checked, product._id);
+          }
         }
       }
     } else {
