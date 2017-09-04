@@ -110,12 +110,10 @@ export default {
 	  const dbPos = checkPermissions.indexOf("dashboard");
 	  if(!checkProduct()){
 	    if(cpPos != -1){
-		 delete checkPermissions[cpPos];
-		 checkPermissions.length--;
+		  checkPermissions.splice(cpPos,1);
 		}
 	    if(dbPos != -1){
-		 delete checkPermissions[dbPos];
-		 checkPermissions.length--;
+		  checkPermissions.splice(dbPos,1);
 		}
 	  }
 	}
