@@ -96,7 +96,7 @@ export default {
 
     function checkProduct(){
       const productUserId = ReactionProduct.selectedProductUserID();
-      return productUserId === userId;
+      return (!productUserId || (productUserId === userId));
     }
 
 	if (typeof checkPermissions === "string" && 
@@ -555,3 +555,6 @@ function createCountryCollection(countries) {
   }
   return countryOptions;
 }
+Router.Hooks.onEnter("index", function(){
+       ReactionProduct.clear();
+	});
