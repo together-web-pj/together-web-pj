@@ -197,6 +197,9 @@ Meteor.methods({
         Collections.Accounts.remove({
           userId: sessionCart.userId
         });
+        Collections.Packages.remove({
+          userId: sessionCart.userId
+        });
         Meteor.users.remove(sessionCart.userId);
         Logger.debug(
           `merge cart: delete cart ${

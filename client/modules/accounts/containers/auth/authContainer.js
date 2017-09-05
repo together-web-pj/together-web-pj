@@ -95,7 +95,6 @@ class AuthContainer extends Component {
             }
           });
         } else {
-		  Meteor.call("accounts/updatePackages");
           Router.go(this.props.currentRoute.route.path);
         }
       });

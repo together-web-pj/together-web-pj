@@ -3,6 +3,7 @@ import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import * as Collections from "/lib/collections";
 import { Hooks, Logger, Reaction } from "/server/api";
+import { updatePackages } from "server/methods/accounts/accounts"
 
 export default function () {
   /**
@@ -162,6 +163,8 @@ export default function () {
       // run onCreateUser hooks
       // (the user object must be returned by all callbacks)
       const userDoc = Hooks.Events.run("onCreateUser", user, options);
+
+      updatePackages(user._id);
       return userDoc;
     }
   });

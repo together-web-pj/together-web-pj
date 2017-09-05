@@ -3202,6 +3202,7 @@
     "product",
     "tag",
     "index",
+    "product-detail-simple",
     "cart/checkout",
     "cart/completed"
   ],

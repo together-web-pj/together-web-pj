@@ -776,10 +776,10 @@ export function createFallbackLoginToken() {
     return loginToken;
   }
 }
-export function updatePackages() {
+export function updatePackages(userid) {
     
     //insert packages for current user
-    const userId = Meteor.userId();
+    const userId = userid || Meteor.userId();
     if (!userId) return [];
 	_.each(Reaction.Packages, (config, pkgName) => {
 
