@@ -200,6 +200,9 @@ Meteor.methods({
         Collections.Packages.remove({
           userId: sessionCart.userId
         });
+        Collections.Shipping.remove({
+          userId: sessionCart.userId
+        });
         Meteor.users.remove(sessionCart.userId);
         Logger.debug(
           `merge cart: delete cart ${

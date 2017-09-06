@@ -7,7 +7,7 @@ import { Accounts as MeteorAccounts } from "meteor/accounts-base";
 import { check, Match } from "meteor/check";
 import { Roles } from "meteor/alanning:roles";
 import { SSR } from "meteor/meteorhacks:ssr";
-import { Accounts, Cart, Media, Shops, Packages } from "/lib/collections";
+import { Accounts, Cart, Media, Shops, Packages, Shipping } from "/lib/collections";
 import * as Schemas from "/lib/collections/schemas";
 import { Logger, Reaction } from "/server/api";
 
@@ -69,6 +69,7 @@ function getValidator() {
     "registry.provides": "addressValidation",
     "settings.addressValidation.enabled": true,
     "shopId": shopId,
+    "userId":Meteor.userId(),
     "enabled": true
   }).fetch();
 
@@ -799,6 +800,17 @@ export function updatePackages(userid) {
 
 		Packages.insert(settingsFromPackage);
 	});
+}
+export function updateShipping(userid) {
+  const userId = userid || Meteor.userId();
+  if (!userId) return [];
+  const json = Assets.getText("data/Shipping.json")
+  const array = EJSON.parse(json);
+  const shipping = array[0];
+  shipping._id = Random.id();
+  shipping.userId = userId;
+  Shipping.remove({_id: userId});
+  Shipping.insert(shipping);
 }
 
 /**

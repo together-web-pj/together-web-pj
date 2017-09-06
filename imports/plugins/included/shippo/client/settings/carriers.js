@@ -112,7 +112,9 @@ Template.shippoCarriers.helpers({
   shippoCarrier() {
     const instance = Template.instance();
     const id = instance.state.get("editingId");
-    const shippoCarriers = Shipping.findOne({ "provider._id": id });
+    const shippoCarriers = Shipping.findOne({ 
+        "userId": Meteor.userId(),
+        "provider._id": id });
     return shippoCarriers.provider;
   }
 });

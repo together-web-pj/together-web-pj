@@ -25,13 +25,6 @@ export default function () {
   }
 
   try {
-    Logger.debug("Loading Shipping Data");
-    Fixture.process(Assets.getText("data/Shipping.json"), ["name"], Reaction.Import.shipping);
-  } catch (error) {
-    Logger.error(error, "Bypassing loading Shipping default data.");
-  }
-
-  try {
     Logger.debug("Loading Product Data");
     Fixture.process(Assets.getText("data/Products.json"), ["title"], Reaction.Import.product);
   } catch (error) {

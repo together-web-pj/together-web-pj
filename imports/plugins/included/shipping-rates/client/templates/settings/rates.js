@@ -124,7 +124,9 @@ Template.shippingRatesSettings.helpers({
   shippingRate() {
     const instance = Template.instance();
     const id = instance.state.get("editingId");
-    const providerRates = Shipping.findOne({ "provider.name": "flatRates" }) || {};
+    const providerRates = Shipping.findOne({ 
+        "userId": Meteor.userId(),
+        "provider.name": "flatRates" }) || {};
     let rate = {};
     if (providerRates && providerRates.methods) {
       if (id) {

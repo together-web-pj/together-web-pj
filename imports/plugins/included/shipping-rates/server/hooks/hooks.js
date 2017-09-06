@@ -1,5 +1,5 @@
 import { check } from "meteor/check";
-import { Shipping, Packages } from "/lib/collections";
+import { Shipping, Packages, Products } from "/lib/collections";
 import { Logger, Reaction, Hooks } from "/server/api";
 import { Cart as CartSchema } from "/lib/collections/schemas";
 
@@ -8,9 +8,18 @@ function getShippingRates(rates, cart) {
   check(cart, CartSchema);
   const shops = [];
   const products = cart.items;
+  if(!products)
+	return rates;
+
+  const product = Products.findOne(products[0].productId)
+  const userId = product.userId;
+
+  if(!userId)
+	return rates;
 
   const pkgData = Packages.findOne({
     name: "reaction-shipping-rates",
+    userId: userId,
     shopId: Reaction.getShopId()
   });
 
@@ -21,6 +30,7 @@ function getShippingRates(rates, cart) {
   // default selector is current shop
   let selector = {
     "shopId": Reaction.getShopId(),
+    "userId": userId,
     "provider.enabled": true
   };
 
@@ -37,6 +47,7 @@ function getShippingRates(rates, cart) {
       "shopId": {
         $in: shops
       },
+      "userId": userId,
       "provider.enabled": true
     };
   }

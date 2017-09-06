@@ -35,7 +35,7 @@ class ProductDetailContainer extends Component {
   handleCheckout = () => {
     const storedCart = Cart.findOne();
 	const pdc = this;
-	if(storedCart.items.length) {
+	if(storedCart && storedCart.items && storedCart.items.length) {
 	storedCart.items.forEach(function(item) {
       Meteor.call("cart/removeFromCart", item._id,
 		  (error, result) => {

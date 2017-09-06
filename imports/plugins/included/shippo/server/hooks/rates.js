@@ -1,13 +1,23 @@
 import { Meteor } from "meteor/meteor";
-import { Shipping, Packages } from "/lib/collections";
+import { Shipping, Packages, Products } from "/lib/collections";
 import { Logger, Reaction, Hooks } from "/server/api";
 
 // callback ran on getShippingRates hook
 function getShippingRates(rates, cart) {
   const shops = [];
   const products = cart.items;
+  
+  if(!products)
+	return rates;
+
+  const product = Products.findOne(products[0].productId)
+  const userId = product.userId;
+
+  if(!userId)
+	return rates;
 
   const pkgData = Packages.findOne({
+    userId:userId,
     name: "reaction-shippo",
     shopId: Reaction.getShopId()
   });
@@ -20,6 +30,7 @@ function getShippingRates(rates, cart) {
   // default selector is current shop
   let selector = {
     "shopId": Reaction.getShopId(),
+    "userId":userId,
     "provider.enabled": true
   };
 
@@ -36,6 +47,7 @@ function getShippingRates(rates, cart) {
       "shopId": {
         $in: shops
       },
+      "userId":userId,
       "provider.enabled": true
     };
   }
