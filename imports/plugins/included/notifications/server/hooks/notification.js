@@ -1,5 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { Logger, MethodHooks, Reaction } from "/server/api";
+import * as Collections from "/lib/collections";
 
 const getAdminUserId = () => {
   // TODO validate with multiple show owners
@@ -29,13 +30,15 @@ MethodHooks.after("cart/copyCartToOrder", function (options) {
   const prefix = Reaction.getShopPrefix();
   const url = `${prefix}/notifications`;
   const sms = true;
+  const order = Collections.Orders.findOne({_id: options.result});
+  const sellerId = order.items[0].userId;
 
   // Send notification to user who made the order
   Logger.debug(`sending notification to user: ${userId}`);
   Meteor.call("notification/send", userId, type, url, sms);
 
   // Sending notification to admin
-  const adminId = getAdminUserId();
+  const adminId = sellerId;//getAdminUserId();
   if (adminId) {
     return sendNotificationToAdmin(adminId);
   }

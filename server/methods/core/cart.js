@@ -404,6 +404,7 @@ Meteor.methods({
           variants: variant,
           title: product.title,
           type: product.type,
+          userId: product.userId,
           parcel: product.parcel || null
         }
       }
