@@ -3203,6 +3203,7 @@
     "tag",
     "index",
     "product-detail-simple",
+    "reaction-checkout",
     "cart/checkout",
     "cart/completed"
   ],
@@ -3227,7 +3228,6 @@
     "account/profile",
     "createProduct",
     "product-detail-simple",
-    "reaction-wizard",
     "notifications",
     "reaction-orders",
     "orders",
