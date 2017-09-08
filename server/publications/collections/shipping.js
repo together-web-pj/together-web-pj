@@ -17,6 +17,7 @@ Meteor.publish("Shipping", function (query, options) {
   }
   const select = query || {};
   select.shopId = shopId;
+  select.userId = this.userId;
 
   // appends a count to the collection
   // we're doing this for use with griddleTable

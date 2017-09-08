@@ -111,6 +111,7 @@ function addShippoProviders(carriers, shopId = Reaction.getShopId()) {
     const carrierName = carrier.carrier;
     const carrierLabel = formatCarrierLabel(carrierName);
     const currentResult = Shipping.insert({
+      userId:Meteor.userId(),
       name: `${carrierLabel}`, // check it later for a better name
       methods: [],
       provider: {
@@ -151,6 +152,7 @@ function removeShippoProviders(carriersIds, shopId = Reaction.getShopId()) {
 
 function updateShippoProviders(activeCarriers, shopId = Reaction.getShopId()) {
   const currentShippoProviders = Shipping.find({
+    "userId": Meteor.userId(),
     "shopId": shopId,
     "provider.shippoProvider": { $exists: true }
   }, {

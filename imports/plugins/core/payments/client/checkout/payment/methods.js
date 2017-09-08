@@ -1,11 +1,15 @@
 import { Template } from "meteor/templating";
 import { Reaction } from "/client/api";
+import { Cart, Products } from "/lib/collections";
 import "./methods.html";
 
 Template.corePaymentMethods.helpers({
   enabledPayments,
   isAdmin() {
     return Reaction.hasAdminAccess();
+  },
+  ready() {
+    return Template.instance().subProdcut.ready();
   }
 });
 
@@ -16,6 +20,16 @@ Template.corePaymentMethods.onCreated(function () {
   if (!paymentsEnabled) {
     openActionView();
   }
+  const self = this;
+  this.subProdcut = Meteor.subscribe("Products", function(){
+      const cart = Cart.findOne({userId: Meteor.userId()});
+      if(cart && cart.items[0]){
+      const product = Products.findOne({_id:cart.items[0].productId});
+      if(product)
+        self.productUserId = product.userId;
+      }
+   });
+
 });
 
 Template.corePaymentMethods.events({
@@ -27,8 +41,13 @@ Template.corePaymentMethods.events({
 
 function enabledPayments() {
   const enabledPaymentsArr = [];
+  const userId = Template.instance().productUserId;
+  if(!userId)
+    return enabledPaymentsArr;
+
   const apps = Reaction.Apps({
     provides: "paymentMethod",
+    userId: userId,
     enabled: true
   });
   for (const app of apps) {

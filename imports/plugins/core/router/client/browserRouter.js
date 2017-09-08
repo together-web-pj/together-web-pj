@@ -102,14 +102,16 @@ class BrowserRouter extends Component {
     if (routesDiffer === false) {
       // Run on enter hooks
       Router.Hooks.run("onExit", "GLOBAL", routeData);
-      Router.Hooks.run("onExit", previousRoute.name, previousRoute);
+	  if(previousRoute.route)
+        Router.Hooks.run("onExit", previousRoute.route.name, previousRoute);
 
       // Set current route reactive-var
       Router.setCurrentRoute(routeData);
 
       // Run on enter hooks for the new route
       Router.Hooks.run("onEnter", "GLOBAL", routeData);
-      Router.Hooks.run("onEnter", routeData.name, routeData);
+	  if(routeData.route)
+        Router.Hooks.run("onEnter", routeData.route.name, routeData);
     }
   }
 

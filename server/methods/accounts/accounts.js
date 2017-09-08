@@ -7,7 +7,7 @@ import { Accounts as MeteorAccounts } from "meteor/accounts-base";
 import { check, Match } from "meteor/check";
 import { Roles } from "meteor/alanning:roles";
 import { SSR } from "meteor/meteorhacks:ssr";
-import { Accounts, Cart, Media, Shops, Packages } from "/lib/collections";
+import { Accounts, Cart, Media, Shops, Packages, Shipping } from "/lib/collections";
 import * as Schemas from "/lib/collections/schemas";
 import { Logger, Reaction } from "/server/api";
 
@@ -69,6 +69,7 @@ function getValidator() {
     "registry.provides": "addressValidation",
     "settings.addressValidation.enabled": true,
     "shopId": shopId,
+    "userId":Meteor.userId(),
     "enabled": true
   }).fetch();
 
@@ -776,6 +777,41 @@ export function createFallbackLoginToken() {
     return loginToken;
   }
 }
+export function updatePackages(userid) {
+    
+    //insert packages for current user
+    const userId = userid || Meteor.userId();
+    if (!userId) return [];
+	_.each(Reaction.Packages, (config, pkgName) => {
+
+        // existing registry will be upserted with changes, perhaps we should add:
+        Reaction.assignOwnerRoles(Reaction.getShopId(), pkgName, config.registry);
+
+        // Settings from the package registry.js
+        const settingsFromPackage = {
+          name: pkgName,
+          icon: config.icon,
+          enabled: !!config.autoEnable,
+          settings: config.settings,
+          registry: config.registry,
+          layout: config.layout,
+		  userId: userId
+        };
+
+		Packages.insert(settingsFromPackage);
+	});
+}
+export function updateShipping(userid) {
+  const userId = userid || Meteor.userId();
+  if (!userId) return [];
+  const json = Assets.getText("data/Shipping.json")
+  const array = EJSON.parse(json);
+  const shipping = array[0];
+  shipping._id = Random.id();
+  shipping.userId = userId;
+  Shipping.remove({_id: userId});
+  Shipping.insert(shipping);
+}
 
 /**
  * Reaction Account Methods
@@ -792,5 +828,6 @@ Meteor.methods({
   "accounts/addUserPermissions": addUserPermissions,
   "accounts/removeUserPermissions": removeUserPermissions,
   "accounts/setUserPermissions": setUserPermissions,
-  "accounts/createFallbackLoginToken": createFallbackLoginToken
+  "accounts/createFallbackLoginToken": createFallbackLoginToken,
+  "accounts/updatePackages": updatePackages
 });

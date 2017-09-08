@@ -27,12 +27,15 @@ export const methods = {
     }
     const pkg = Packages.findOne(packageId);
     if (pkg && pkg.settings[provider]) {
-      const current = Shipping.findOne({ "provider.name": provider });
+      const current = Shipping.findOne({
+          "userId": Meteor.userId(),
+          "provider.name": provider });
       const enabled = pkg.settings[provider].enabled;
       // const enabled = !current.provider.enabled;
       if (current && current.provider) {
         return Shipping.update({
           "_id": current._id,
+          "userId": Meteor.userId(),
           "provider.name": provider
         }, {
           $set: {

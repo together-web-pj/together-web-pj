@@ -36,8 +36,9 @@ export const methods = {
       providerId = rate._id;
     } else {
       // There is no default provider, so add it
-      if (!Shipping.find({}).count()) {
+      if (!Shipping.find({"userId": Meteor.userId()}).count()) {
         const defaultProvider = Shipping.insert({
+          userId: Meteor.userId(),
           name: "Default Shipping Provider",
           provider: {
             name: "flatRates",
@@ -52,6 +53,7 @@ export const methods = {
 
     rate._id = Random.id();
     return Shipping.update({
+      userId: Meteor.userId(),
       _id: providerId
     }, {
       $addToSet: {

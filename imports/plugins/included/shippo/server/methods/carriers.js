@@ -21,6 +21,7 @@ export const methods = {
     const flatten = require("flatten-obj")();
     const update = flatten(method);
     return Shipping.update({
+      "userId": Meteor.userId(),
       "provider._id": provider._id
     }, {
       $set: update

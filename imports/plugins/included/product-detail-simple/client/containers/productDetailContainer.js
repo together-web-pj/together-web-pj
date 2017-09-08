@@ -32,6 +32,21 @@ class ProductDetailContainer extends Component {
     });
   }
 
+  handleCheckout = () => {
+    const storedCart = Cart.findOne();
+	const pdc = this;
+	if(storedCart && storedCart.items && storedCart.items.length) {
+	storedCart.items.forEach(function(item) {
+      Meteor.call("cart/removeFromCart", item._id,
+		  (error, result) => {
+		  if(!Cart.findOne().items.length)
+		    pdc.handleAddToCart();
+		  });
+	  });
+	}
+	else
+	  this.handleAddToCart();
+  }
   handleAddToCart = () => {
     let productId;
     let quantity;
@@ -128,6 +143,7 @@ class ProductDetailContainer extends Component {
             this.handleCartQuantityChange(null, 1);
             this.state.click++;
 
+            Reaction.Router.go("cart/checkout");
             return true;
           });
         }
@@ -241,7 +257,7 @@ class ProductDetailContainer extends Component {
             <ProductDetail
               cartQuantity={this.state.cartQuantity}
               mediaGalleryComponent={<MediaGalleryContainer media={this.props.media} />}
-              onAddToCart={this.handleAddToCart}
+              onAddToCart={this.handleCheckout}
               onCartQuantityChange={this.handleCartQuantityChange}
               onViewContextChange={this.handleViewContextChange}
               socialComponent={<SocialContainer />}

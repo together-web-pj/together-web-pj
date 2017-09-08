@@ -9,8 +9,9 @@ import { Roles } from "meteor/alanning:roles";
 import Logger from "/client/modules/logger";
 import { Countries } from "/client/collections";
 import { localeDep } from  "/client/modules/i18n";
-import { Packages, Shops } from "/lib/collections";
+import { Packages, Shops,Products } from "/lib/collections";
 import { Router } from "/client/modules/router";
+import { ReactionProduct } from "/lib/api";
 
 // Global, private state object for client side
 // This is placed outside the main object to make it a private variable.
@@ -92,6 +93,31 @@ export default {
     let permissions = ["owner"];
     let id = "";
     const userId = checkUserId || this.userId || Meteor.userId();
+
+    function checkProduct(){
+      const productUserId = ReactionProduct.selectedProductUserID();
+      return (!productUserId || (productUserId === userId));
+    }
+
+	if (typeof checkPermissions === "string" && 
+		(checkPermissions == "createProduct" ||
+		checkPermissions == "dashboard"
+		)){
+	  if(!checkProduct())
+		return false;
+	}else if(checkPermissions instanceof Array){
+	  const cpPos = checkPermissions.indexOf("createProduct");
+	  const dbPos = checkPermissions.indexOf("dashboard");
+	  if(!checkProduct()){
+	    if(cpPos != -1){
+		  checkPermissions.splice(cpPos,1);
+		}
+	    if(dbPos != -1){
+		  checkPermissions.splice(dbPos,1);
+		}
+	  }
+	}
+
     //
     // local roleCheck function
     // is the bulk of the logic
@@ -268,7 +294,7 @@ export default {
   },
 
   getPackageSettings(name) {
-    return Packages.findOne({ name, shopId: this.getShopId() });
+    return Packages.findOne({ name, userId: Meteor.userId() });
   },
 
   allowGuestCheckout() {
@@ -529,3 +555,6 @@ function createCountryCollection(countries) {
   }
   return countryOptions;
 }
+Router.Hooks.onEnter("index", function(){
+       ReactionProduct.clear();
+	});

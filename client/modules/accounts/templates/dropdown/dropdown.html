@@ -50,7 +50,7 @@
 
 <template name="userAccountsDropdown">
   <!--user account shortcut icons -->
-  {{#each reactionApps provides="userAccountDropdown" enabled=true}}
+  {{#each reactionApps provides="userAccountDropdown" enabled=true userId=userid}}
     <li class="dropdown-apps-icon">
       <a id="user-dropdown-apps-{{name}}" title="{{label}}">
         <i class="{{icon}}"></i>

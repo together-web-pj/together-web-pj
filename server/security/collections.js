@@ -100,11 +100,23 @@ export default function () {
     Translations,
     Shipping,
     Orders,
-    Packages,
     Templates,
     Jobs
   ]).ifHasRole({
     role: "admin",
+    group: Reaction.getShopId()
+  }).ifShopIdMatches().exceptProps(["shopId"]).allowInClientCode();
+
+  Security.permit(["insert", "remove"]).collections([
+    Packages
+  ]).ifHasRole({
+    role: "admin",
+    group: Reaction.getShopId()
+  }).ifShopIdMatches().exceptProps(["shopId"]).allowInClientCode();
+  Security.permit(["update"]).collections([
+    Packages
+  ]).ifHasRole({
+    role: ["admin", "owner", "createProduct"],
     group: Reaction.getShopId()
   }).ifShopIdMatches().exceptProps(["shopId"]).allowInClientCode();
 

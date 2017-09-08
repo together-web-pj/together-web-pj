@@ -30,7 +30,6 @@ function transform(doc, userId) {
 
   // check for admin,owner or package permissions to view settings
   const hasAdmin = Roles.userIsInRole(userId, permissions, doc.shopId);
-
   if (doc.registry) {
     for (let registry of doc.registry) {
       // add some normalized defaults
@@ -66,7 +65,21 @@ function transform(doc, userId) {
     doc.settings = packageSettings;
   }
 
-  return doc;
+  if(doc.registry){
+	  doc.registry = doc.registry.filter(function(registry){	  
+        const permissions = ["admin", "owner", registry.name || (userId, registry.packageName + "/" + registry.template)];
+	    const hasRegPermission = Roles.userIsInRole(userId, permissions, doc.shopId);
+	    return (((doc.userId == userId)&&hasAdmin&& (!registry.route || hasRegPermission)) ||
+                (registry.enabled == true) && (registry.provides == "paymentMethod"));
+        });
+  }
+
+  if(((doc.userId == userId) && hasAdmin) || (doc.registry && doc.registry.length)){
+    return doc;
+  }
+  else{
+    return null;
+  }
 }
 
 //
@@ -91,7 +104,8 @@ Meteor.publish("Packages", function (shopCursor) {
         layout: 1,
         icon: 1,
         settings: 1,
-        audience: 1
+        audience: 1,
+        userId:1
       }
     };
 
@@ -107,7 +121,6 @@ Meteor.publish("Packages", function (shopCursor) {
       }
       // observe and transform Package registry adds i18n and other meta data
       const observer = Packages.find({
-        shopId: shop._id
       }, options).observe({
         added: function (doc) {
           self.added("Packages", doc._id, transform(doc, self.userId));
