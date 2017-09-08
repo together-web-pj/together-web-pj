@@ -74,6 +74,7 @@ const OrderHelper =  {
         break;
       default:
     }
+    query["items.userId"] = Meteor.userId(); 
 
     return query;
   }
@@ -117,7 +118,7 @@ Meteor.publish("PaginatedOrders", function (filter, limit) {
   if (!shopId) {
     return this.ready();
   }
-  if (Roles.userIsInRole(this.userId, ["admin", "owner"], shopId)) {
+  if (Roles.userIsInRole(this.userId, ["admin", "owner", "createProduct"], shopId)) {
     Counts.publish(this, "newOrder-count", Orders.find(OrderHelper.makeQuery("new")), { noReady: true });
     Counts.publish(this, "processingOrder-count", Orders.find(OrderHelper.makeQuery("processing")), { noReady: true });
     Counts.publish(this, "completedOrder-count", Orders.find(OrderHelper.makeQuery("completed")), { noReady: true });
